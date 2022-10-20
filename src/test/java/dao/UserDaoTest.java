@@ -23,9 +23,12 @@ class UserDaoTest {
     void addANDSelect() throws SQLException, ClassNotFoundException {
         //public UserDao awsUserDao(){} 함수 호출을 한다.
         UserDao userDao = context.getBean("awsUserDao",UserDao.class);
-        String id = "25";
-        userDao.add(new User(id,"Nunu2","112233qqww"));
-        User user = userDao.Select(id);
-        Assertions.assertEquals("Nunu2",user.getName());
+        //userDao.deleteAll();
+//        String id = "25";
+//        userDao.add(new User(id,"Nunu2","112233qqww"));
+//        User user = userDao.Select(id);
+//        Assertions.assertEquals("Nunu2",user.getName());
+
+        Assertions.assertEquals(7,userDao.getCount());
     }
 }

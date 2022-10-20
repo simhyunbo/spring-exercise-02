@@ -16,15 +16,22 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public int getCount() {
-        return 0;
+    public int getCount() throws SQLException, ClassNotFoundException {
+        Connection conn = connectionMaker.getConnection();
+        PreparedStatement pstmt = conn.prepareStatement("SELECT count(*) FROM user");
+        ResultSet rs = pstmt.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        rs.close();
+        pstmt.close();
+        conn.close();
+        return count;
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        Connection conn = null;
+        Connection conn = connectionMaker.getConnection();
         PreparedStatement pstmt;
-
-        conn = connectionMaker.getConnection();
         pstmt = conn.prepareStatement("DELETE FROM user");
         pstmt.executeUpdate();
         pstmt.close();

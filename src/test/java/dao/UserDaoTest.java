@@ -28,7 +28,20 @@ class UserDaoTest {
 //        userDao.add(new User(id,"Nunu2","112233qqww"));
 //        User user = userDao.Select(id);
 //        Assertions.assertEquals("Nunu2",user.getName());
+        
+        //getCount()테스트
+        User user1 = new User("1","sim","1234");
+        User user2 = new User("2","kim","5678");
+        User user3 = new User("3","park","qwer");
 
-        Assertions.assertEquals(7,userDao.getCount());
+        userDao.add(user1);
+        assertEquals(1,userDao.getCount());
+        userDao.add(user2);
+        assertEquals(2,userDao.getCount());
+        userDao.add(user3);
+        assertEquals(3,userDao.getCount());
+
+
+
     }
 }

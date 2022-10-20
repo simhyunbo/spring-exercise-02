@@ -1,5 +1,7 @@
 package dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
+
 import java.sql.*;
 import java.util.Map;
 
@@ -64,15 +66,19 @@ public class UserDao {
         ps.setString(1, id);
         ResultSet rs = ps.executeQuery();
         //rs.next()는 다음 데이터로 한칸 이동 -> why? 처음에는 데이터를 읽을 수 없는 가장 앞쪽에 있어서 rs.next()를 호출해야 읽을 수 있다.
-        rs.next();
-        User user = new User(rs.getString("id")
-                , rs.getString("name"), rs.getString("password"));
+        User user = null;
+        //결과 값이 없을 때 exception 처리
+        if(rs.next()) {
+            user = new User(rs.getString("id")
+                    , rs.getString("name"), rs.getString("password"));
+        }
+            //리소스 반납
+            rs.close();
+            ps.close();
+            conn.close();
+            if(user == null) throw new EmptyResultDataAccessException(1);
 
-        //리소스 반납
-        rs.close();
-        ps.close();
-        conn.close();
-        return user;
+            return user;
 
     }
 }

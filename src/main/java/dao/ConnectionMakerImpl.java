@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class ConnectionMakerImpl implements ConnectionMaker{
-
+    //DB연결
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         Map<String, String> env = System.getenv();
         Class.forName("com.mysql.cj.jdbc.Driver");

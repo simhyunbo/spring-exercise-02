@@ -8,7 +8,7 @@ import java.util.Map;
 public class UserDao {
     private ConnectionMaker connectionMaker;
 
-    //빈 UserDao() Constructor에서 초기화
+
     public UserDao() {
 
         this.connectionMaker = new ConnectionMakerImpl();
@@ -19,6 +19,7 @@ public class UserDao {
     }
 
     public int getCount() throws SQLException, ClassNotFoundException {
+
         Connection conn = connectionMaker.getConnection();
         PreparedStatement pstmt = conn.prepareStatement("SELECT count(*) FROM user");
         ResultSet rs = pstmt.executeQuery();
@@ -32,13 +33,29 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        Connection conn = connectionMaker.getConnection();
-        PreparedStatement pstmt;
-        pstmt = conn.prepareStatement("DELETE FROM user");
-        pstmt.executeUpdate();
-        pstmt.close();
-        conn.close();
 
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = connectionMaker.getConnection();
+            pstmt = conn.prepareStatement("DELETE FROM user");
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally { //error가 발생해도 실행되는 블럭
+            if( pstmt != null){
+                try{
+                    pstmt.close();
+                } catch (SQLException e){
+                }
+            }
+            if(conn != null){
+                try{
+                    conn.close();
+                } catch (SQLException e){
+                }
+            }
+        }
     }
 
 
@@ -65,7 +82,6 @@ public class UserDao {
                 "SELECT id,name,password FROM user WHERE id = ?");
         ps.setString(1, id);
         ResultSet rs = ps.executeQuery();
-        //rs.next()는 다음 데이터로 한칸 이동 -> why? 처음에는 데이터를 읽을 수 없는 가장 앞쪽에 있어서 rs.next()를 호출해야 읽을 수 있다.
         User user = null;
         //결과 값이 없을 때 exception 처리
         if(rs.next()) {

@@ -4,7 +4,7 @@ public class User {
         private String id;
         private String name;
         private String password;
-
+        //매개변수 없이 호출
         public User() {
         }
 

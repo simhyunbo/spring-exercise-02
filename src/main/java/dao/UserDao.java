@@ -38,7 +38,10 @@ public class UserDao {
         PreparedStatement pstmt = null;
         try {
             conn = connectionMaker.getConnection();
-            pstmt = conn.prepareStatement("DELETE FROM user");
+//            pstmt = conn.prepareStatement("DELETE FROM user");
+//            pstmt.executeUpdate();
+            //DeteleAllStrategy 사용하기
+            pstmt = new DeleteAllStrategy().makePreparedStatement(conn);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);

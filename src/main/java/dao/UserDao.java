@@ -4,15 +4,17 @@ import com.mysql.cj.xdevapi.AddStatement;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
-    private DataSource dataSource;
+    private final DataSource dataSource;
+    private final JdbcContext jdbcContext;
 
 
     public UserDao(DataSource dataSource) {
-
+        this.jdbcContext = new JdbcContext(dataSource);
         this.dataSource = dataSource;
     }
 
@@ -62,13 +64,18 @@ public class UserDao {
         return count;
     }
 
+//    public void executeSql(String sql) throws SQLException {
+//
+//        jdbcContextWithStatementStrategy(new StatementStrategy() {
+//            @Override
+//            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+//                return c.prepareStatement(sql);
+//            }
+//        });
+//    }
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                return c.prepareStatement("delete from user");
-            }
-        });
+        this.jdbcContext.executeSql("delete from user");
+
     }
 //        Connection conn = null;
 //        PreparedStatement pstmt = null;

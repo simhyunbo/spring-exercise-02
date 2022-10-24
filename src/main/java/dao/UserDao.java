@@ -63,38 +63,56 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            conn = dataSource.getConnection();
-//            pstmt = conn.prepareStatement("DELETE FROM user");
-//            pstmt.executeUpdate();
-            //DeteleAllStrategy 사용하기
-            pstmt = new DeleteAllStrategy().makePreparedStatement(conn);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally { //error가 발생해도 실행되는 블럭
-            if( pstmt != null){
-                try{
-                    pstmt.close();
-                } catch (SQLException e){
-                }
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                return c.prepareStatement("delete from user");
             }
-            if(conn != null){
-                try{
-                    conn.close();
-                } catch (SQLException e){
-                }
-            }
-        }
+        });
     }
+//        Connection conn = null;
+//        PreparedStatement pstmt = null;
+//        try {
+//            conn = dataSource.getConnection();
+////            pstmt = conn.prepareStatement("DELETE FROM user");
+////            pstmt.executeUpdate();
+//            //DeteleAllStrategy 사용하기
+//            pstmt = new DeleteAllStrategy().makePreparedStatement(conn);
+//            pstmt.executeUpdate();
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        } finally { //error가 발생해도 실행되는 블럭
+//            if( pstmt != null){
+//                try{
+//                    pstmt.close();
+//                } catch (SQLException e){
+//                }
+//            }
+//            if(conn != null){
+//                try{
+//                    conn.close();
+//                } catch (SQLException e){
+//                }
+//            }
+//        }
+//    }
 
 
     public void add(User user) throws SQLException{
-        StatementStrategy st = new AddStrategy(user);
-        jdbcContextWithStatementStrategy(st);
+        jdbcContextWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                PreparedStatement ps = null;
+                ps = c.prepareStatement("INSERT INTO user(id, name, password) VALUES(?,?,?);");
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+                return ps;
+            }
+        });
+
+//        StatementStrategy st = new AddStrategy(user);
+//        jdbcContextWithStatementStrategy(st);
     }
 //    public void add(User user) throws SQLException, ClassNotFoundException {
 //
